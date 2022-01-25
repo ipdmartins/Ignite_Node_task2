@@ -30,11 +30,11 @@ function checksCreateTodosUserAvailability(request, response, next) {
     return next();
   }
 
-  if (user.pro === false && user.todos.lenght < 10) {
+  if (user.pro === false && user.todos.length < 10) {
     return next();
   }
 
-  return response.status(404).json({ error: "User has no availability" });
+  return response.status(403).json({ error: "User has no availability" });
 }
 
 function checksTodoExists(request, response, next) {
@@ -47,13 +47,15 @@ function checksTodoExists(request, response, next) {
   if (!user) {
     return response.status(404).json({ error: "User not found" });
   }
-  console.log(validate(id));
+
   if (validate(id)) {
     const foundTodos = user.todos.find((todo) => todo.id === id);
 
     if (foundTodos) {
-      request.user = foundTodos;
-      request.todo = foundTodos.todo;
+      request.user = user;
+
+      request.todo = foundTodos;
+
       return next();
     } else {
       return response.status(404).json({ error: "User not found" });
